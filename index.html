@@ -4,7 +4,43 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Micro Study</title>
-<link rel="stylesheet" href="style.css">
+<style>
+:root{--bg:#F2F5F8;--card:#fff;--ink:#17263B;--muted:#55657A;--line:#D5DDE6;--demand:#2B5FD9;--supply:#0F8B7A;--eq:#D99A00;--bad:#C23B3B}
+@media (prefers-color-scheme:dark){:root{--bg:#121B28;--card:#1B2738;--ink:#E8EEF5;--muted:#9FB0C4;--line:#2E3D52;--demand:#6B9BFF;--supply:#3FCDB8;--eq:#F0B93A;--bad:#F08080}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{padding:16px 20px;border-bottom:1px solid var(--line)}
+.brand{display:inline-flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none;font:700 22px Georgia,"Times New Roman",serif}
+main{max-width:720px;margin:0 auto;padding:28px 20px 60px}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.25}
+h1{font-size:2rem;margin:.2em 0 .4em}
+a{color:var(--demand)}
+.chlist{display:grid;gap:12px;margin-top:20px}
+.chlist a{display:block;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--demand);border-radius:8px;padding:14px 16px;text-decoration:none;color:var(--ink)}
+.chlist a:hover,.chlist a:focus-visible{border-left-color:var(--eq)}
+.chlist small{display:block;color:var(--muted)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:18px 0 22px;border-bottom:1px solid var(--line)}
+.tabs a{padding:8px 14px;text-decoration:none;color:var(--muted);border-bottom:3px solid transparent}
+.tabs a.on{color:var(--ink);border-bottom-color:var(--supply);font-weight:600}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:22px}
+.panel h2{margin-top:0}
+.term{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
+.example{border-left:4px solid var(--eq);padding:2px 0 2px 14px;margin:16px 0}
+.count{color:var(--muted);margin:0 0 6px}
+.opts{display:grid;gap:10px;margin:16px 0}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:11px 14px;text-align:left}
+button:hover:not(:disabled){border-color:var(--demand)}
+button:focus-visible,a:focus-visible{outline:3px solid var(--eq);outline-offset:2px}
+button.right{border-color:var(--supply);background:color-mix(in srgb,var(--supply) 18%,var(--card))}
+button.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 16%,var(--card))}
+button.primary{background:var(--demand);border-color:var(--demand);color:#fff;text-align:center}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.card{min-height:190px;display:flex;align-items:center;justify-content:center;text-align:center;font:1.25rem/1.4 Georgia,serif;padding:24px;width:100%}
+.card.back{background:color-mix(in srgb,var(--supply) 14%,var(--card));font:1.05rem/1.5 system-ui,sans-serif}
+.note{color:var(--muted);font-size:.95rem}
+@media (prefers-reduced-motion:no-preference){button{transition:border-color .15s,background .15s}}
+
+</style>
 </head>
 <body>
 <header>
@@ -14,7 +50,277 @@
   </a>
 </header>
 <main id="app"></main>
-<script src="data/chapters.js"></script>
-<script src="app.js"></script>
+<script>
+// Add a chapter by adding one object to this list. Everything on the site is built from this data.
+window.CHAPTERS = [
+{
+  id: "ch1",
+  title: "Ten principles of economics",
+  blurb: "Chapter 1: trade-offs, opportunity cost, margins, incentives, trade, markets, productivity and inflation.",
+  summary: [
+    "Economics is the study of how society manages its scarce resources. Scarcity means society has limited resources and so cannot produce everything people want.",
+    "Four principles describe individual decisions. People face trade-offs, such as efficiency against equality. The cost of something is what you give up to get it (opportunity cost). Rational people decide by comparing marginal benefit with marginal cost. And people respond to incentives.",
+    "Three principles describe how people interact. Trade can make everyone better off. Markets are usually a good way to organize economic activity, guided by prices (the invisible hand). Governments can sometimes improve market outcomes, by fixing a market failure (an externality or market power) or by promoting equality.",
+    "Three principles describe the economy as a whole. A country’s standard of living depends on its productivity. Prices rise when the government prints too much money. And in the short run, society faces a trade-off between inflation and unemployment."
+  ],
+  examples: [
+    {t: "The cost of going to college", d: "Tuition counts, but so do the wages you give up by not working. Room and board do not, because you would pay for housing and food anyway."},
+    {t: "An airline’s last empty seat", d: "One more passenger adds almost no cost to a flight that is leaving anyway, so selling the seat cheaply at the last minute can still add profit. That is thinking at the margin."},
+    {t: "A gas price spike", d: "Higher prices are an incentive. People drive less, carpool and shop for more efficient cars."}
+  ],
+  cards: [
+    {q: "Scarcity", a: "Society has limited resources and cannot produce all the goods and services people want."},
+    {q: "Efficiency vs equality", a: "Efficiency: getting the most from scarce resources. Equality: spreading the benefits fairly among members of society. Policies often trade one for the other."},
+    {q: "Opportunity cost", a: "Whatever you must give up to obtain something."},
+    {q: "Marginal change", a: "A small, incremental adjustment to an existing plan of action."},
+    {q: "Rational people", a: "People who systematically and purposefully do the best they can to achieve their objectives."},
+    {q: "Market failure", a: "A situation where a market left alone fails to allocate resources efficiently. Main causes: externalities and market power."},
+    {q: "Externality", a: "The effect of one person’s actions on the well-being of a bystander."},
+    {q: "Productivity", a: "The quantity of goods and services produced from each unit of labor input."},
+    {q: "Inflation", a: "An increase in the overall level of prices in the economy."}
+  ],
+  mc: [
+    {q: "What is the opportunity cost of going to a concert?", options: ["The ticket price only", "The ticket price plus the value of what you gave up to go", "Zero, if you enjoy the concert", "The average ticket price in your city"], answer: 1, why: "Opportunity cost includes everything you give up, including the best alternative use of your time."},
+    {q: "A rational person decides to take an action when…", options: ["the total benefit is positive", "the marginal benefit exceeds the marginal cost", "the average cost is low", "everyone else is doing it"], answer: 1, why: "Rational decisions are made at the margin, by comparing marginal benefit with marginal cost."},
+    {q: "Which of these is an externality?", options: ["A bakery raises its bread prices", "A factory’s smoke harms the health of nearby residents", "Consumers buy more when income rises", "A firm hires more workers"], answer: 1, why: "An externality is an effect on a bystander who is not part of the transaction."},
+    {q: "The “invisible hand” refers to…", options: ["government planning of production", "self-interested buyers and sellers being guided by prices toward outcomes that benefit society", "hidden costs in markets", "central bank control of money"], answer: 1, why: "Prices guide decentralized decisions toward an efficient allocation of resources."},
+    {q: "High and persistent inflation is most likely caused by…", options: ["strong unions", "rapid growth in the quantity of money", "high productivity", "free trade"], answer: 1, why: "Prices rise when the government creates too much money."},
+    {q: "In the short run, society typically faces a trade-off between…", options: ["inflation and unemployment", "efficiency and productivity", "exports and imports", "scarcity and growth"], answer: 0, why: "Policies that lower inflation tend to raise unemployment temporarily, and the reverse."},
+    {q: "What is the ultimate source of a country’s standard of living?", options: ["Its money supply", "Its productivity", "Its government spending", "Its trade surplus"], answer: 1, why: "Countries with higher output per worker generally enjoy higher living standards."}
+  ],
+  tf: [
+    {q: "Trade between countries is a game in which one side wins and the other loses.", answer: false, why: "Trade allows specialization, so both sides can be better off."},
+    {q: "Efficiency means that the benefits of resources are distributed uniformly.", answer: false, why: "That describes equality. Efficiency means getting the most from scarce resources."},
+    {q: "Because water is essential for life, the marginal benefit of one more glass is always large.", answer: false, why: "Where water is plentiful, one more glass adds little benefit."},
+    {q: "Market power is the ability of a single buyer or seller to substantially influence prices.", answer: true, why: "It is one of the two main causes of market failure."},
+    {q: "Some policies that make incomes more equal can reduce efficiency.", answer: true, why: "That is why the first principle speaks of trade-offs."},
+    {q: "A tax on a good does not change how much of it people buy.", answer: false, why: "People respond to incentives, so a tax usually reduces the quantity bought."}
+  ]
+},
+{
+  id: "ch2",
+  title: "Thinking like an economist",
+  blurb: "Chapter 2: models, the circular-flow diagram, the production possibilities frontier, positive and normative statements.",
+  summary: [
+    "Economists try to be objective like scientists: they observe, build theories, and test them with data. They build simplified models by making assumptions, leaving out details that are not central to the question.",
+    "The circular-flow diagram shows how households and firms interact. In markets for goods and services (product markets), households are buyers and firms are sellers. In markets for the factors of production (labor, land and capital), households are sellers and firms are buyers. Money flows one way, and goods and inputs flow the other.",
+    "The production possibilities frontier (PPF) shows the combinations of two goods an economy can produce with its available resources and technology. Points on the frontier are efficient, points inside are inefficient, and points outside are unattainable. Its slope shows opportunity cost, and it bows outward because the opportunity cost rises as more of one good is produced. Growth in resources or technology shifts it outward.",
+    "Microeconomics studies decisions by households and firms and how they interact in markets. Macroeconomics studies economy-wide phenomena such as inflation, unemployment and growth.",
+    "A positive statement describes how the world is and can be tested. A normative statement describes how the world ought to be. Economists may disagree because of differences in scientific judgments or in values."
+  ],
+  examples: [
+    {t: "A subway map as a model", d: "It ignores real distances and street layouts, yet it is the best tool for planning a trip. A good economic model also leaves out detail on purpose."},
+    {t: "A paycheck and a grocery bill", d: "Your wages come from a firm through the factor market. Spending them at a grocery store is a household purchase in the product market."},
+    {t: "Recession and new technology on the PPF", d: "A recession with high unemployment puts an economy at a point inside its frontier. A new technology, such as better irrigation, shifts the frontier outward."}
+  ],
+  cards: [
+    {q: "Economic model", a: "A simplified representation of some part of the economy, built from assumptions, that helps us understand how it works."},
+    {q: "Circular-flow diagram", a: "A model showing how money, goods, services and inputs flow between households and firms through markets."},
+    {q: "Factors of production", a: "The inputs used to produce goods and services, such as labor, land and capital."},
+    {q: "Production possibilities frontier", a: "A graph of the combinations of two goods an economy can produce given its resources and technology."},
+    {q: "Points inside, on and outside the PPF", a: "Inside: inefficient. On: efficient. Outside: unattainable with current resources and technology."},
+    {q: "Microeconomics", a: "The study of how households and firms make decisions and how they interact in specific markets."},
+    {q: "Macroeconomics", a: "The study of economy-wide phenomena, including inflation, unemployment and economic growth."},
+    {q: "Positive vs normative statements", a: "Positive: claims about what is, testable with evidence. Normative: claims about what ought to be, based on values."}
+  ],
+  mc: [
+    {q: "An economic model is best described as…", options: ["a detailed, realistic copy of the economy", "a simplified representation of some aspect of the economy", "a machine that predicts the future exactly", "a list of government policies"], answer: 1, why: "Models simplify on purpose so we can focus on the essentials."},
+    {q: "In the markets for the factors of production, who are the buyers?", options: ["Households", "Firms", "Both households and firms", "The government only"], answer: 1, why: "Households sell their labor, land and capital to firms, which buy them to produce goods."},
+    {q: "An economy is producing at a point inside its PPF. This means…", options: ["it is producing efficiently", "it is producing inefficiently, for example with unemployed resources", "the production is unattainable", "its technology has improved"], answer: 1, why: "Inside the frontier, the economy could produce more of at least one good without producing less of the other."},
+    {q: "A technological advance that improves production of both goods will…", options: ["shift the PPF outward", "shift the PPF inward", "move the economy along the PPF", "have no effect on the PPF"], answer: 0, why: "More output becomes possible with the same resources."},
+    {q: "Which topic belongs to microeconomics?", options: ["How a tax on soda affects soda purchases by households", "The causes of a national recession", "The level of national unemployment", "Why prices rise across the whole economy"], answer: 0, why: "It concerns decisions of households in one specific market."},
+    {q: "Which of these is a normative statement?", options: ["Raising the minimum wage reduces teen employment.", "The unemployment rate was 5 percent last year.", "The government should raise the minimum wage.", "Gasoline prices rose after the supply cut."], answer: 2, why: "“Should” signals a value judgment about how things ought to be."},
+    {q: "Why might two economists give conflicting advice?", options: ["Differences in scientific judgments or in values", "One of them is not scientific", "Economics has no data", "They always disagree"], answer: 0, why: "Disagreement can come from different readings of the evidence or from different value judgments."}
+  ],
+  tf: [
+    {q: "A good economic model describes every detail of reality.", answer: false, why: "Models simplify by leaving out unimportant details."},
+    {q: "Points outside the PPF are attainable with current resources and technology.", answer: false, why: "They are unattainable until the frontier shifts outward."},
+    {q: "A bowed-out PPF reflects an opportunity cost that rises as more of one good is produced.", answer: true, why: "Resources are not equally well suited to making both goods."},
+    {q: "A positive statement can be tested with evidence, but a normative statement cannot be settled by data alone.", answer: true, why: "Normative claims also depend on values."},
+    {q: "Macroeconomics studies the decisions of individual households and firms.", answer: false, why: "That is microeconomics. Macroeconomics studies the economy as a whole."},
+    {q: "In the circular-flow diagram, households buy goods and services in the product market.", answer: true, why: "In product markets households are buyers and firms are sellers."}
+  ]
+},
+{
+  id: "ch3",
+  title: "Interdependence and the gains from trade",
+  blurb: "Chapter 3: absolute and comparative advantage, specialization, and why trade benefits everyone.",
+  summary: [
+    "Every day we consume goods and services made by other people, at home and abroad. Interdependence and trade are valuable because they let everyone enjoy more quantity and variety.",
+    "There are two ways to compare producers. A producer has an absolute advantage if it needs fewer inputs to make a good. A producer has a comparative advantage if its opportunity cost of making the good is lower.",
+    "To find opportunity cost, ask how much of the other good is given up to make one unit of this good. If one person has the lower opportunity cost of a good, the other has the lower opportunity cost of the other good, so each person can have a comparative advantage in something.",
+    "Each party should specialize in the good where it has the comparative advantage and then trade. If the trade price lies between the two parties’ opportunity costs, both end up consuming beyond what they could produce alone, outside their own PPF.",
+    "The gains from trade depend on comparative advantage, not absolute advantage. The same logic applies to countries, which is why economists favor free trade. A country exports goods in which it has a comparative advantage and imports the others."
+  ],
+  examples: [
+    {t: "The lawyer and the assistant", d: "A lawyer may type faster than her assistant, but an hour of typing costs her an hour of billable legal work. Her assistant has the comparative advantage in typing."},
+    {t: "Roommates and chores", d: "One roommate is quicker at both cooking and cleaning, yet both do better if each focuses on the chore where their opportunity cost is lower."},
+    {t: "Countries and shirts", d: "A country that could make both cars and shirts efficiently still imports shirts if making them would force it to give up more cars than another country would."}
+  ],
+  cards: [
+    {q: "Absolute advantage", a: "The ability to produce a good using fewer inputs than another producer."},
+    {q: "Comparative advantage", a: "The ability to produce a good at a lower opportunity cost than another producer."},
+    {q: "Opportunity cost (in production)", a: "The amount of the other good you give up to make one more unit of this good."},
+    {q: "Specialization", a: "Concentrating on the activity where you have the comparative advantage."},
+    {q: "Exports", a: "Goods produced domestically and sold abroad."},
+    {q: "Imports", a: "Goods produced abroad and sold domestically."},
+    {q: "Where must the trade price lie?", a: "Between the two parties’ opportunity costs of the good. Then both gain."},
+    {q: "Source of gains from trade", a: "Comparative advantage, not absolute advantage."}
+  ],
+  mc: [
+    {q: "Which statement defines comparative advantage?", options: ["Producing a good using fewer inputs", "Producing a good at a lower opportunity cost", "Producing more of every good", "Selling a good at a higher price"], answer: 1, why: "Comparative advantage is about opportunity cost."},
+    {q: "Maya can make 4 shirts or 2 hats per day. Leo can make 1 shirt or 1 hat per day. Who has the comparative advantage in hats?", options: ["Maya", "Leo", "Both", "Neither"], answer: 1, why: "A hat costs Maya 2 shirts but costs Leo only 1 shirt, so Leo’s opportunity cost is lower."},
+    {q: "In the same example, who has the absolute advantage in making shirts?", options: ["Maya", "Leo", "Both", "Neither"], answer: 0, why: "Maya makes 4 shirts a day against Leo’s 1."},
+    {q: "In the same example, which price for one hat (in shirts) would benefit both?", options: ["0.5 shirts", "1.5 shirts", "3 shirts", "Any price at all"], answer: 1, why: "The price must lie between 1 shirt (Leo’s cost) and 2 shirts (Maya’s cost)."},
+    {q: "When two parties specialize and trade based on comparative advantage…", options: ["both can consume outside their own PPF", "both consume inside their own PPF", "only one gains", "no one gains"], answer: 0, why: "Trade lets each consume combinations they could not produce alone."},
+    {q: "Which goods will a nation typically export?", options: ["Those in which it has a comparative advantage", "Those it cannot make well", "Those with no domestic buyers", "Those in which others have an absolute advantage"], answer: 0, why: "Countries specialize and sell what they produce at relatively low opportunity cost."},
+    {q: "A lawyer types faster than her assistant but hires the assistant anyway. Why?", options: ["Typing is cheap for the assistant relative to the lawyer’s time", "The lawyer has a comparative advantage in typing", "The assistant has an absolute advantage in typing", "The lawyer wants to lose money"], answer: 0, why: "The lawyer’s opportunity cost of typing is higher, so the assistant has the comparative advantage."}
+  ],
+  tf: [
+    {q: "A person who is better at producing everything cannot gain from trade.", answer: false, why: "Gains depend on comparative advantage, so even the most productive person gains by specializing."},
+    {q: "Opportunity cost is the key to deciding who has a comparative advantage.", answer: true, why: "The producer with the lower opportunity cost has the comparative advantage."},
+    {q: "One person can have the comparative advantage in both goods.", answer: false, why: "Opportunity costs of the two goods are reciprocal, so the advantage must be split."},
+    {q: "Imports are goods produced abroad and sold domestically.", answer: true, why: "Exports are the reverse."},
+    {q: "Trade between countries is a zero-sum game.", answer: false, why: "Both countries can gain through specialization."},
+    {q: "Both parties can be better off from trade only if the price is outside their opportunity costs.", answer: false, why: "The price must be between their opportunity costs."}
+  ]
+},
+{
+  id: "ch4",
+  title: "The market forces of supply and demand",
+  blurb: "Chapter 4: demand, supply, equilibrium and what shifts the curves.",
+  summary: [
+    "A competitive market has many buyers and sellers, each too small to influence the price. The supply and demand model describes how price and quantity are determined in such markets.",
+    "The law of demand: as the price of a good rises, the quantity demanded falls, so the demand curve slopes downward. Besides price, demand is shaped by income, the prices of substitutes and complements, tastes, expectations and the number of buyers. A change in any of these shifts the demand curve.",
+    "The law of supply: as the price rises, the quantity supplied rises, so the supply curve slopes upward. Besides price, supply is shaped by input prices, technology, expectations and the number of sellers. A change in any of these shifts the supply curve.",
+    "Equilibrium is where supply and demand intersect. At a higher price there is a surplus and the price falls. At a lower price there is a shortage and the price rises. The price therefore moves toward the level that balances quantity supplied and quantity demanded.",
+    "To analyze an event: decide whether it shifts supply, demand or both, decide the direction of the shift, then compare the new equilibrium with the old one. A rightward demand shift raises price and quantity, a leftward demand shift lowers both, a rightward supply shift lowers price and raises quantity, and a leftward supply shift raises price and lowers quantity."
+  ],
+  examples: [
+    {t: "Ice cream in a heat wave", d: "Hot weather raises demand, so the curve shifts right. Price and quantity both rise."},
+    {t: "A frost destroys the orange crop", d: "Supply shifts left. Orange juice costs more and less is sold."},
+    {t: "Plywood before a hurricane", d: "Demand jumps. The higher price discourages hoarding and directs the limited supply to the buyers who need it most."}
+  ],
+  cards: [
+    {q: "Competitive market", a: "A market with so many buyers and sellers that each has a negligible effect on the price."},
+    {q: "Law of demand", a: "Other things equal, when the price of a good rises, the quantity demanded falls."},
+    {q: "Normal good vs inferior good", a: "Normal: demand rises when income rises. Inferior: demand falls when income rises."},
+    {q: "Substitutes vs complements", a: "Substitutes: a price rise for one raises demand for the other. Complements: a price rise for one lowers demand for the other."},
+    {q: "Law of supply", a: "Other things equal, when the price of a good rises, the quantity supplied rises."},
+    {q: "Equilibrium", a: "The point where supply and demand meet and quantity supplied equals quantity demanded."},
+    {q: "Surplus", a: "Quantity supplied exceeds quantity demanded at the current price. The price tends to fall."},
+    {q: "Shortage", a: "Quantity demanded exceeds quantity supplied at the current price. The price tends to rise."},
+    {q: "Movement along vs shift of a curve", a: "A change in the good’s own price moves you along the curve. A change in any other determinant shifts the curve."}
+  ],
+  mc: [
+    {q: "Which change causes a movement along the demand curve?", options: ["A change in consumer income", "A change in tastes", "A change in the good’s own price", "A change in the price of a substitute"], answer: 2, why: "Only the good’s own price moves you along the curve. The others shift it."},
+    {q: "Income rises and ice cream is a normal good. What happens?", options: ["Demand shifts right", "Demand shifts left", "Supply shifts right", "Quantity supplied falls"], answer: 0, why: "For normal goods, demand moves in the same direction as income."},
+    {q: "Hot dogs and hot dog buns are complements. The price of hot dogs rises. What happens in the bun market?", options: ["Demand for buns shifts right", "Demand for buns shifts left", "Supply of buns shifts right", "Nothing changes"], answer: 1, why: "People buy fewer hot dogs, so they want fewer buns at every price."},
+    {q: "The price is below the equilibrium price. The market has…", options: ["a surplus", "a shortage", "equilibrium", "lower demand"], answer: 1, why: "Quantity demanded exceeds quantity supplied, so the price rises."},
+    {q: "A cheaper way to make bicycles is invented. What happens?", options: ["Supply shifts right; price falls, quantity rises", "Supply shifts left; price rises, quantity falls", "Demand shifts right; price and quantity rise", "Demand shifts left; price falls, quantity falls"], answer: 0, why: "Lower costs raise supply, which lowers the price and raises the quantity."},
+    {q: "Demand increases and supply increases at the same time. What is certain?", options: ["Price rises", "Price falls", "Quantity rises", "Quantity falls"], answer: 2, why: "Both shifts increase quantity. The effect on price depends on which shift is larger."},
+    {q: "Which describes a competitive market?", options: ["One seller sets the price", "Many buyers and sellers, each with negligible influence on price", "The government sets the price", "Only a few large firms"], answer: 1, why: "In a competitive market, everyone is a price taker."},
+    {q: "Which of these shifts the supply curve?", options: ["A change in input prices", "A change in the good’s own price", "A change in consumers’ income", "A change in consumers’ tastes"], answer: 0, why: "Input prices change the cost of production, so they shift supply."}
+  ],
+  tf: [
+    {q: "The supply curve slopes upward because higher prices make firms willing to supply more.", answer: true, why: "That is the law of supply."},
+    {q: "A change in a good’s own price shifts its demand curve.", answer: false, why: "It moves you along the demand curve."},
+    {q: "If the price is above equilibrium, there is a shortage.", answer: false, why: "Above equilibrium there is a surplus."},
+    {q: "Demand for an inferior good falls when income rises.", answer: true, why: "That is the definition of an inferior good."},
+    {q: "A decrease in supply raises the equilibrium price and lowers the equilibrium quantity.", answer: true, why: "The supply curve shifts left along a downward-sloping demand curve."},
+    {q: "A change in the number of buyers shifts the supply curve.", answer: false, why: "The number of buyers shifts demand. The number of sellers shifts supply."}
+  ]
+}
+];
+
+</script>
+<script>
+const app = document.getElementById("app");
+const store = {
+  get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const TABS = [["summary","Summary"],["cards","Flashcards"],["quiz","Multiple choice"],["tf","True or false"]];
+
+function home(){
+  app.innerHTML = `<h1>Microeconomics</h1><p class="note">Pick a chapter to read the summary, flip flashcards or take a quiz.</p>
+  <div class="chlist">${CHAPTERS.map(c=>{
+    const s = ["quiz","tf"].map(k=>store.get(c.id+":"+k)).filter(Boolean);
+    return `<a href="#${c.id}/summary"><strong>${c.title}</strong><small>${c.blurb}${s.length?" Best scores saved.":""}</small></a>`;
+  }).join("")}</div>`;
+}
+
+function chapter(ch, tab){
+  app.innerHTML = `<a href="#">All chapters</a><h1>${ch.title}</h1>
+  <nav class="tabs">${TABS.map(([k,l])=>`<a href="#${ch.id}/${k}" class="${k===tab?"on":""}">${l}</a>`).join("")}</nav>
+  <section class="panel" id="panel"></section>`;
+  const panel = document.getElementById("panel");
+  if(tab==="cards") cards(ch,panel);
+  else if(tab==="quiz") quiz(ch,"quiz",ch.mc,panel);
+  else if(tab==="tf") quiz(ch,"tf",ch.tf.map(q=>({q:q.q,options:["True","False"],answer:q.answer?0:1,why:q.why})),panel);
+  else summary(ch,panel);
+}
+
+function summary(ch,p){
+  p.innerHTML = `<h2>Key ideas</h2>${ch.summary.map(t=>`<p>${t}</p>`).join("")}
+  <h2>Real-life examples</h2>${ch.examples.map(e=>`<div class="example"><strong>${e.t}</strong><br>${e.d}</div>`).join("")}`;
+}
+
+function cards(ch,p){
+  let list = ch.cards, i = 0, back = false;
+  const draw = () => {
+    const c = list[i];
+    p.innerHTML = `<p class="count">Card ${i+1} of ${list.length}</p>
+    <button class="card ${back?"back":""}" id="flip" aria-label="Flip card">${back?c.a:c.q}</button>
+    <p class="note">${back?"Answer":"Question"}. Tap the card to flip it.</p>
+    <div class="row"><button id="prev">Previous</button><button id="next" class="primary">Next card</button><button id="shuf">Shuffle</button></div>`;
+    document.getElementById("flip").onclick = () => { back=!back; draw(); };
+    document.getElementById("prev").onclick = () => { i=(i-1+list.length)%list.length; back=false; draw(); };
+    document.getElementById("next").onclick = () => { i=(i+1)%list.length; back=false; draw(); };
+    document.getElementById("shuf").onclick = () => { list=shuffle(list); i=0; back=false; draw(); };
+  };
+  draw();
+}
+
+function quiz(ch,kind,pool,p){
+  const key = ch.id+":"+kind;
+  let list = shuffle(pool), i = 0, score = 0, missed = [], full = true;
+  const show = () => {
+    if(i>=list.length) return done();
+    const q = list[i];
+    const base = q.options.map((t,n)=>({t, ok:n===q.answer}));
+    const o = kind==="tf" ? base : shuffle(base);
+    p.innerHTML = `<p class="count">Question ${i+1} of ${list.length}</p><h2>${q.q}</h2>
+    <div class="opts">${o.map((x,n)=>`<button data-n="${n}">${x.t}</button>`).join("")}</div><div id="fb" aria-live="polite"></div>`;
+    p.querySelectorAll(".opts button").forEach(b => b.onclick = () => {
+      const x = o[b.dataset.n];
+      p.querySelectorAll(".opts button").forEach((bb,n)=>{ bb.disabled=true; if(o[n].ok) bb.classList.add("right"); });
+      if(x.ok) score++; else { b.classList.add("wrong"); missed.push(q); }
+      document.getElementById("fb").innerHTML = `<p><strong>${x.ok?"Correct.":"Not quite."}</strong> ${q.why}</p><button class="primary" id="nx">${i+1<list.length?"Next question":"See score"}</button>`;
+      document.getElementById("nx").onclick = () => { i++; show(); };
+    });
+  };
+  const done = () => {
+    let best = (store.get(key)||{}).best || 0;
+    if(full){ best = Math.max(best,score); store.set(key,{best,total:list.length}); }
+    p.innerHTML = `<h2>You got ${score} of ${list.length}</h2>${full?`<p class="note">Best score: ${best} of ${list.length}</p>`:""}
+    <div class="row">${missed.length?`<button id="rm" class="primary">Retry the ${missed.length} you missed</button>`:""}<button id="again">Start over</button></div>`;
+    if(missed.length) document.getElementById("rm").onclick = () => { list=shuffle(missed); i=0; score=0; missed=[]; full=false; show(); };
+    document.getElementById("again").onclick = () => { list=shuffle(pool); i=0; score=0; missed=[]; full=true; show(); };
+  };
+  show();
+}
+
+function route(){
+  const [id,tab] = location.hash.slice(1).split("/");
+  const ch = CHAPTERS.find(c=>c.id===id);
+  ch ? chapter(ch, tab||"summary") : home();
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange", route);
+route();
+
+</script>
 </body>
 </html>
