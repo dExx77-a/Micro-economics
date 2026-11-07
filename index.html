@@ -268,17 +268,23 @@ function summary(ch,p){
 }
 
 function cards(ch,p){
-  let list = ch.cards, i = 0, back = false;
+  const total = ch.cards.length;
+  let queue = shuffle(ch.cards), known = 0, back = false;
   const draw = () => {
-    const c = list[i];
-    p.innerHTML = `<p class="count">Card ${i+1} of ${list.length}</p>
+    if(!queue.length){
+      p.innerHTML = `<h2>All ${total} cards known</h2><p class="note">Every card is out of the pile.</p><div class="row"><button id="again" class="primary">Start over</button></div>`;
+      document.getElementById("again").onclick = () => { queue = shuffle(ch.cards); known = 0; back = false; draw(); };
+      return;
+    }
+    const c = queue[0];
+    p.innerHTML = `<p class="count">${known} of ${total} known, ${queue.length} left in the pile</p>
     <button class="card ${back?"back":""}" id="flip" aria-label="Flip card">${back?c.a:c.q}</button>
-    <p class="note">${back?"Answer":"Question"}. Tap the card to flip it.</p>
-    <div class="row"><button id="prev">Previous</button><button id="next" class="primary">Next card</button><button id="shuf">Shuffle</button></div>`;
-    document.getElementById("flip").onclick = () => { back=!back; draw(); };
-    document.getElementById("prev").onclick = () => { i=(i-1+list.length)%list.length; back=false; draw(); };
-    document.getElementById("next").onclick = () => { i=(i+1)%list.length; back=false; draw(); };
-    document.getElementById("shuf").onclick = () => { list=shuffle(list); i=0; back=false; draw(); };
+    ${back ? `<p class="note">Did you get it right?</p><div class="row"><button id="miss">I got it wrong</button><button id="hit" class="primary">I got it right</button></div>` : `<p class="note">Think of the answer, then tap the card to flip it.</p>`}`;
+    document.getElementById("flip").onclick = () => { back = !back; draw(); };
+    if(back){
+      document.getElementById("hit").onclick = () => { queue.shift(); known++; back = false; draw(); };
+      document.getElementById("miss").onclick = () => { queue.push(queue.shift()); back = false; draw(); };
+    }
   };
   draw();
 }
