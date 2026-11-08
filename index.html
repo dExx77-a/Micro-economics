@@ -40,6 +40,18 @@ button.primary{background:var(--demand);border-color:var(--demand);color:#fff;te
 .note{color:var(--muted);font-size:.95rem}
 @media (prefers-reduced-motion:no-preference){button{transition:border-color .15s,background .15s}}
 
+.examtop{position:sticky;top:0;z-index:5;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin-bottom:14px}
+.examtop strong{font:700 1.3rem Georgia,"Times New Roman",serif;font-variant-numeric:tabular-nums}
+.low{color:var(--bad)}
+button.picked{border-color:var(--demand);background:color-mix(in srgb,var(--demand) 16%,var(--card))}
+.nav{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.nav button{min-width:42px;padding:6px 8px;text-align:center}
+.nav button.ans{background:color-mix(in srgb,var(--supply) 18%,var(--card));border-color:var(--supply)}
+.nav button.cur{outline:3px solid var(--eq)}
+.rev{margin-top:12px}
+.chlist a.exam{border-left-color:var(--supply)}
+button:disabled{opacity:.5;cursor:default}
+
 </style>
 </head>
 <body>
@@ -240,7 +252,15 @@ window.CHAPTERS = [
     {q: "Which statement about trade is correct?", options: ["Unrestricted trade benefits everyone in a country equally", "People who are good at everything cannot gain from trade", "Trade can benefit everyone because people specialize in what they have an absolute advantage in", "Trade can benefit everyone because people specialize in what they have a comparative advantage in"], answer: 3, why: "Gains from trade come from comparative advantage. Even people who are good at everything gain."},
     {q: "According to the principle of comparative advantage…", options: ["a country with a comparative advantage in every item does not need to specialize", "countries should specialize in items they like to consume", "countries should specialize in items that use fewer resources than their partners use", "countries should specialize in items with a lower opportunity cost than their partners"], answer: 3, why: "Specialization follows opportunity cost. A country cannot have a comparative advantage in every item."},
     {q: "A worker can produce 4 watches or 12 rings per hour. With no trade, what is the domestic price of 1 ring?", options: ["3 watches", "1/3 of a watch", "4 watches", "1/4 of a watch", "12 watches"], answer: 1, why: "12 rings cost 4 watches, so 1 ring costs 4/12 = 1/3 of a watch."},
-    {q: "A worker can produce 4 watches or 12 rings per hour. With no trade, what is the opportunity cost of 1 watch?", options: ["3 rings", "1/3 of a ring", "4 rings", "1/4 of a ring", "12 rings"], answer: 0, why: "4 watches cost 12 rings, so 1 watch costs 12/4 = 3 rings."}
+    {q: "A worker can produce 4 watches or 12 rings per hour. With no trade, what is the opportunity cost of 1 watch?", options: ["3 rings", "1/3 of a ring", "4 rings", "1/4 of a ring", "12 rings"], answer: 0, why: "4 watches cost 12 rings, so 1 watch costs 12/4 = 3 rings."},
+    {"q": "Per worker per month, Australia produces 20 food or 5 electrical appliances, and South Korea produces 8 food or 4 electrical appliances. Which statement about absolute advantage is correct?", "options": ["Australia has the absolute advantage in food, South Korea in appliances", "South Korea has the absolute advantage in food, Australia in appliances", "Australia has the absolute advantage in both food and appliances", "South Korea has the absolute advantage in both food and appliances"], "answer": 2, "why": "Australia makes more of each good per worker: 20 against 8 food and 5 against 4 appliances."},
+    {"q": "Per worker per month, Australia produces 20 food or 5 electrical appliances, and South Korea produces 8 food or 4 electrical appliances. What is the opportunity cost of 1 electrical appliance in Australia?", "options": ["5 units of food", "1/5 unit of food", "4 units of food", "1/4 unit of food"], "answer": 2, "why": "5 appliances cost 20 food, so 1 appliance costs 20/5 = 4 food."},
+    {"q": "Per worker per month, Australia produces 20 food or 5 electrical appliances, and South Korea produces 8 food or 4 electrical appliances. What is the opportunity cost of 1 electrical appliance in South Korea?", "options": ["2 units of food", "1/2 unit of food", "4 units of food", "1/4 unit of food"], "answer": 0, "why": "4 appliances cost 8 food, so 1 appliance costs 8/4 = 2 food."},
+    {"q": "Per worker per month, Australia produces 20 food or 5 electrical appliances, and South Korea produces 8 food or 4 electrical appliances. What is the opportunity cost of 1 unit of food in Australia?", "options": ["5 electrical appliances", "1/5 electrical appliance", "4 electrical appliances", "1/4 electrical appliance"], "answer": 3, "why": "20 food cost 5 appliances, so 1 food costs 5/20 = 1/4 appliance."},
+    {"q": "Per worker per month, Australia produces 20 food or 5 electrical appliances, and South Korea produces 8 food or 4 electrical appliances. What is the opportunity cost of 1 unit of food in South Korea?", "options": ["2 electrical appliances", "1/2 electrical appliance", "4 electrical appliances", "1/4 electrical appliance"], "answer": 1, "why": "8 food cost 4 appliances, so 1 food costs 4/8 = 1/2 appliance."},
+    {"q": "Per worker per month, Australia produces 20 food or 5 electrical appliances, and South Korea produces 8 food or 4 electrical appliances. Which statement about comparative advantage is correct?", "options": ["Australia has the comparative advantage in food, South Korea in appliances", "South Korea has the comparative advantage in food, Australia in appliances", "Australia has the comparative advantage in both goods", "South Korea has the comparative advantage in both goods", "Neither country has a comparative advantage"], "answer": 0, "why": "Food costs Australia 1/4 appliance but costs Korea 1/2, so Australia is cheaper at food. Appliances cost Korea 2 food but cost Australia 4, so Korea is cheaper at appliances."},
+    {"q": "Per worker per month, Australia produces 20 food or 5 electrical appliances, and South Korea produces 8 food or 4 electrical appliances. What should South Korea do?", "options": ["Specialize in food, export food and import appliances", "Specialize in appliances, export appliances and import food", "Produce both goods, because no country has a comparative advantage", "Produce neither, because it has an absolute disadvantage in both"], "answer": 1, "why": "South Korea has the comparative advantage in appliances. An absolute disadvantage in both goods does not stop it from gaining."},
+    {"q": "Per worker per month, Australia produces 20 food or 5 electrical appliances, and South Korea produces 8 food or 4 electrical appliances. The price of an appliance can be stated in units of food. Which price range makes both countries better off from trade?", "options": ["More than 1/5 unit of food, less than 1/4 unit", "More than 4 units of food, less than 5 units", "More than 1/4 unit of food, less than 1/2 unit", "More than 2 units of food, less than 4 units"], "answer": 3, "why": "The price must lie between the two opportunity costs of an appliance: Korea’s 2 food and Australia’s 4 food."}
   ]
 },
 {
@@ -326,7 +346,7 @@ const TABS = [["summary","Summary"],["cards","Flashcards"],["quiz","Multiple cho
 
 function home(){
   app.innerHTML = `<h1>Microeconomics</h1><p class="note">Pick a chapter to read the summary, flip flashcards or take a quiz.</p>
-  <div class="chlist">${CHAPTERS.map(c=>{
+  <div class="chlist"><a class="exam" href="#exam"><strong>Teacher’s questions exam</strong><small>${examPool().length} multiple choice questions in 2 hours. Answers are shown at the end.</small></a>${CHAPTERS.map(c=>{
     const s = ["quiz","tf"].map(k=>store.get(c.id+":"+k)).filter(Boolean);
     return `<a href="#${c.id}/summary"><strong>${c.title}</strong><small>${c.blurb}${s.length?" Best scores saved.":""}</small></a>`;
   }).join("")}</div>`;
@@ -378,7 +398,7 @@ function quiz(ch,kind,pool,p){
     if(i>=list.length) return done();
     const q = list[i];
     const base = q.options.map((t,n)=>({t, ok:n===q.answer}));
-    const o = kind==="tf" ? base : shuffle(base);
+    const o = (kind==="tf" || q.options.some(t=>/\b(above|these|first two)\b|^(none|all|both) of/i.test(t))) ? base : shuffle(base);
     p.innerHTML = `<p class="count">Question ${i+1} of ${list.length}</p><h2>${q.q}</h2>
     <div class="opts">${o.map((x,n)=>`<button data-n="${n}">${x.t}</button>`).join("")}</div><div id="fb" aria-live="polite"></div>`;
     p.querySelectorAll(".opts button").forEach(b => b.onclick = () => {
@@ -400,8 +420,98 @@ function quiz(ch,kind,pool,p){
   show();
 }
 
+const EXAM_SECONDS = 7200;
+let tick = null;
+
+function examPool(){
+  return CHAPTERS.flatMap(c => (c.practice||[]).map((q,i) => Object.assign({}, q, {id: c.id+"-"+i, chTitle: c.title})));
+}
+
+function examHome(){
+  const n = examPool().length, saved = store.get("exam:state"), last = store.get("exam:last");
+  const buttons = saved && !saved.done
+    ? `<button class="primary" id="resume">Resume exam</button><button id="start">Start a new exam</button>`
+    : saved && saved.done
+    ? `<button class="primary" id="start">Start a new exam</button><button id="review">See last results</button>`
+    : `<button class="primary" id="start">Start exam</button>`;
+  app.innerHTML = `<a href="#">All chapters</a><h1>Teacher’s questions exam</h1>
+  <section class="panel"><p>${n} multiple choice questions taken from your teacher’s class quizzes, chapters 1 to 4, in random order. You have 2 hours. The clock keeps running if you leave the page, and answers and explanations appear only after you finish.</p>
+  ${last ? `<p class="note">Last result: ${last.score} of ${last.total} on ${last.date}.</p>` : ""}
+  <div class="row">${buttons}</div></section>`;
+  const st = document.getElementById("start");
+  st.onclick = () => {
+    if(saved && !saved.done && !confirm("This will discard your exam in progress. Start a new one?")) return;
+    const now = Date.now();
+    const state = {order: shuffle(examPool()).map(q=>q.id), answers: {}, i: 0, start: now, end: now + EXAM_SECONDS*1000, done: false};
+    store.set("exam:state", state);
+    exam(state);
+  };
+  const rs = document.getElementById("resume"); if(rs) rs.onclick = () => exam(saved);
+  const rv = document.getElementById("review"); if(rv) rv.onclick = () => examResult(saved);
+}
+
+function exam(state){
+  const byId = Object.fromEntries(examPool().map(q=>[q.id,q]));
+  const n = state.order.length;
+  const left = () => Math.max(0, Math.round((state.end-Date.now())/1000));
+  const fmt = s => [Math.floor(s/3600), Math.floor(s%3600/60), s%60].map(x=>String(x).padStart(2,"0")).join(":");
+  const save = () => store.set("exam:state", state);
+  const finish = () => { clearInterval(tick); state.done = true; state.finished = Math.min(Date.now(), state.end); save(); examResult(state); };
+  const draw = () => {
+    const q = byId[state.order[state.i]];
+    const answered = Object.keys(state.answers).length;
+    app.innerHTML = `<div class="examtop"><strong id="clock">${fmt(left())}</strong><span>${answered} of ${n} answered</span><button id="finish">Finish exam</button></div>
+    <section class="panel"><p class="count">Question ${state.i+1} of ${n}</p><h2>${q.q}</h2>
+    <div class="opts">${q.options.map((t,k)=>`<button data-k="${k}" class="${state.answers[q.id]===k?"picked":""}">${t}</button>`).join("")}</div>
+    <div class="row"><button id="prev" ${state.i===0?"disabled":""}>Previous</button><button id="next" class="primary" ${state.i===n-1?"disabled":""}>Next</button></div></section>
+    <div class="nav">${state.order.map((id,k)=>`<button data-j="${k}" class="${k===state.i?"cur":""} ${id in state.answers?"ans":""}">${k+1}</button>`).join("")}</div>`;
+    app.querySelectorAll("[data-k]").forEach(b => b.onclick = () => { state.answers[q.id] = Number(b.dataset.k); save(); draw(); });
+    app.querySelectorAll("[data-j]").forEach(b => b.onclick = () => { state.i = Number(b.dataset.j); save(); draw(); window.scrollTo(0,0); });
+    document.getElementById("prev").onclick = () => { state.i--; save(); draw(); window.scrollTo(0,0); };
+    document.getElementById("next").onclick = () => { state.i++; save(); draw(); window.scrollTo(0,0); };
+    document.getElementById("finish").onclick = () => {
+      const missing = n - answered;
+      if(missing && !confirm("You have "+missing+" unanswered question"+(missing>1?"s":"")+". Finish the exam anyway?")) return;
+      finish();
+    };
+  };
+  clearInterval(tick);
+  if(left()===0) return finish();
+  tick = setInterval(() => {
+    const s = left(), c = document.getElementById("clock");
+    if(c){ c.textContent = fmt(s); c.className = s<300 ? "low" : ""; }
+    if(s<=0) finish();
+  }, 1000);
+  draw();
+}
+
+function examResult(state){
+  clearInterval(tick);
+  const byId = Object.fromEntries(examPool().map(q=>[q.id,q]));
+  let score = 0; const per = {}, wrong = [];
+  state.order.forEach((id,k) => {
+    const q = byId[id], a = state.answers[id], ok = a===q.answer;
+    const p = per[q.chTitle] = per[q.chTitle] || [0,0];
+    p[1]++; if(ok){ score++; p[0]++; } else wrong.push({k,q,a});
+  });
+  const n = state.order.length, pct = Math.round(100*score/n);
+  const mins = Math.max(1, Math.round(((state.finished||state.end)-state.start)/60000));
+  if(!state.scored){
+    state.scored = true;
+    store.set("exam:state", state);
+    store.set("exam:last", {score, total:n, date:new Date().toLocaleDateString()});
+  }
+  app.innerHTML = `<a href="#exam">Back to the exam page</a><h1>${score} of ${n} (${pct}%)</h1><p class="note">Time used: ${mins} minutes of 120.</p>
+  <section class="panel"><h2>By chapter</h2>${Object.entries(per).map(([t,v])=>`<p>${t}: ${v[0]} of ${v[1]}</p>`).join("")}</section>
+  <h2>${wrong.length ? "Questions to review ("+wrong.length+")" : "Perfect score"}</h2>
+  ${wrong.map(w=>`<div class="panel rev"><p class="count">Question ${w.k+1}</p><p><strong>${w.q.q}</strong></p><p>Your answer: ${w.a===undefined ? "not answered" : w.q.options[w.a]}</p><p>Correct answer: ${w.q.options[w.q.answer]}</p><p class="note">${w.q.why}</p></div>`).join("")}`;
+  window.scrollTo(0,0);
+}
+
 function route(){
+  clearInterval(tick);
   const [id,tab] = location.hash.slice(1).split("/");
+  if(id==="exam"){ examHome(); window.scrollTo(0,0); return; }
   const ch = CHAPTERS.find(c=>c.id===id);
   ch ? chapter(ch, tab||"summary") : home();
   window.scrollTo(0,0);
