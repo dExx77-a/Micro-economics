@@ -344,9 +344,14 @@ const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){ const j=Math.flo
 const tabsFor = ch => ch.practice ? TABS.concat([["practice","Class quiz"]]) : TABS;
 const TABS = [["summary","Summary"],["cards","Flashcards"],["quiz","Multiple choice"],["tf","True or false"]];
 
+function dailyCard(){
+  const p = dailyPlan(), n = p.due.length + p.newToday.length, st = streakOf(p.S.log,p.t);
+  return `<a class="exam" href="#daily"><strong>Daily review</strong><small>${n ? n+" to do today" : "Nothing left today"}. Streak: ${st} day${st===1?"":"s"}.${p.dl>0 ? " Exam in "+p.dl+" day"+(p.dl>1?"s":"")+"." : ""}</small></a>`;
+}
+
 function home(){
   app.innerHTML = `<h1>Microeconomics</h1><p class="note">Pick a chapter to read the summary, flip flashcards or take a quiz.</p>
-  <div class="chlist"><a class="exam" href="#exam"><strong>Teacher’s questions exam</strong><small>${examPool().length} multiple choice questions in 2 hours. Answers are shown at the end.</small></a>${CHAPTERS.map(c=>{
+  <div class="chlist">${dailyCard()}<a class="exam" href="#exam"><strong>Teacher’s questions exam</strong><small>${examPool().length} multiple choice questions in 2 hours. Answers are shown at the end.</small></a>${CHAPTERS.map(c=>{
     const s = ["quiz","tf"].map(k=>store.get(c.id+":"+k)).filter(Boolean);
     return `<a href="#${c.id}/summary"><strong>${c.title}</strong><small>${c.blurb}${s.length?" Best scores saved.":""}</small></a>`;
   }).join("")}</div>`;
@@ -508,10 +513,128 @@ function examResult(state){
   window.scrollTo(0,0);
 }
 
+const EXAM_DATE = "2026-11-16"; // change to your exam day (YYYY-MM-DD)
+const INTERVALS = [1,2,4]; // days until the next review after a correct answer, by box
+
+const today = () => Math.floor((Date.now() - new Date().getTimezoneOffset()*60000) / 86400000);
+function daysLeft(){
+  const d = new Date(EXAM_DATE+"T00:00:00");
+  if(isNaN(d)) return 0;
+  const n = new Date(); n.setHours(0,0,0,0);
+  return Math.round((d-n)/86400000);
+}
+function dailyItems(){
+  const out = [];
+  CHAPTERS.forEach(c => {
+    (c.cards||[]).forEach((x,i) => out.push({id:c.id+":c"+i, kind:"card", ch:c.title, q:x.q, a:x.a}));
+    (c.mc||[]).forEach((x,i) => out.push(Object.assign({id:c.id+":m"+i, kind:"mc", ch:c.title}, x)));
+    (c.tf||[]).forEach((x,i) => out.push({id:c.id+":t"+i, kind:"mc", ch:c.title, q:x.q, options:["True","False"], answer:x.answer?0:1, why:x.why}));
+    (c.practice||[]).forEach((x,i) => out.push(Object.assign({id:c.id+":p"+i, kind:"mc", ch:c.title}, x)));
+  });
+  return out;
+}
+function dailyState(){
+  const S = store.get("daily:state") || {};
+  S.items = S.items || {}; S.meta = S.meta || {day:0, newCount:0}; S.log = S.log || [];
+  return S;
+}
+function streakOf(log,t){ let d = log.includes(t) ? t : t-1, n = 0; while(log.includes(d)){ n++; d--; } return n; }
+function dailyPlan(){
+  const S = dailyState(), all = dailyItems(), t = today(), dl = daysLeft();
+  const fresh = all.filter(x => !S.items[x.id]);
+  const made = S.meta.day===t ? S.meta.newCount : 0;
+  const perDay = dl>1 ? Math.ceil((fresh.length+made)/(dl-1)) : 15;
+  const due = all.filter(x => S.items[x.id] && S.items[x.id].due<=t);
+  const newToday = fresh.slice(0, Math.max(0, perDay-made));
+  const weak = all.filter(x => S.items[x.id] && S.items[x.id].miss>0 && S.items[x.id].box<3);
+  const learned = all.filter(x => S.items[x.id] && S.items[x.id].box>=2).length;
+  return {S, all, t, dl, due, newToday, weak, learned};
+}
+
+function daily(){
+  const p = dailyPlan(), n = p.due.length + p.newToday.length, done = p.S.log.includes(p.t), st = streakOf(p.S.log,p.t);
+  app.innerHTML = `<a href="#">All chapters</a><h1>Daily review</h1>
+  <section class="panel">${p.dl>0 ? `<p><strong>Exam in ${p.dl} day${p.dl>1?"s":""}.</strong> New items are spread so everything is seen before then.</p>` : ""}
+  <p>Streak: <strong>${st}</strong> day${st===1?"":"s"}. Learned so far: ${p.learned} of ${p.all.length}.</p>
+  <p>${n ? `Today: ${p.due.length} to review and ${p.newToday.length} new.` : done ? "You’re done for today. Come back tomorrow." : "Nothing is due right now."}</p>
+  <div class="row">${n ? `<button class="primary" id="go">Start today’s review</button>` : ""}${p.weak.length ? `<button id="weak">Practice my weak items (${p.weak.length})</button>` : ""}</div>
+  <p class="note">Items you get right come back after 1, 2 and then 4 days. Items you miss come back tomorrow and again later today.</p></section>`;
+  const go = document.getElementById("go"); if(go) go.onclick = () => dailySession(p.due.concat(p.newToday), p, true);
+  const wk = document.getElementById("weak"); if(wk) wk.onclick = () => dailySession(p.weak, p, false);
+}
+
+function dailySession(queue, p, isDaily){
+  const S = p.S, t = p.t, total = queue.length;
+  const q = shuffle(queue).map(item => ({item, retry:false}));
+  let firstTry = 0;
+  const save = () => store.set("daily:state", S);
+  const record = (e, ok) => {
+    const id = e.item.id;
+    if(!S.items[id]){
+      S.items[id] = {box:0, due:t, miss:0};
+      if(S.meta.day!==t) S.meta = {day:t, newCount:0};
+      S.meta.newCount++;
+    }
+    const s = S.items[id];
+    if(!e.retry){
+      if(ok){ s.box = Math.min(s.box+1,3); s.due = t + INTERVALS[s.box-1]; firstTry++; }
+      else { s.box = 0; s.due = t+1; s.miss++; }
+    }
+    q.shift();
+    if(!ok) q.push({item:e.item, retry:true});
+    save();
+  };
+  const finish = () => {
+    if(isDaily && !S.log.includes(t)) S.log.push(t);
+    save();
+    const tomorrow = p.all.filter(x => S.items[x.id] && S.items[x.id].due<=t+1).length;
+    app.innerHTML = `<a href="#daily">Back to Daily review</a><h1>${isDaily ? "Done for today" : "Practice finished"}</h1>
+    <section class="panel"><p>You got ${firstTry} of ${total} right on the first try.</p>
+    ${isDaily ? `<p>Streak: <strong>${streakOf(S.log,t)}</strong> day${streakOf(S.log,t)===1?"":"s"}.</p>` : ""}
+    <p>${tomorrow} item${tomorrow===1?"":"s"} will be due tomorrow.</p></section>`;
+    window.scrollTo(0,0);
+  };
+  const show = () => {
+    if(!q.length) return finish();
+    const e = q[0], x = e.item;
+    const head = `<p class="count">${x.ch}${e.retry ? ", second try" : ""}. ${q.length} left.</p>`;
+    if(x.kind==="card"){
+      let back = false;
+      const draw = () => {
+        app.innerHTML = `<a href="#daily">Stop for now</a><section class="panel">${head}
+        <button class="card ${back?"back":""}" id="flip" aria-label="Flip card">${back?x.a:x.q}</button>
+        ${back ? `<p class="note">Did you get it right?</p><div class="row"><button id="miss">I got it wrong</button><button id="hit" class="primary">I got it right</button></div>` : `<p class="note">Think of the answer, then tap the card to flip it.</p>`}</section>`;
+        document.getElementById("flip").onclick = () => { back = !back; draw(); };
+        if(back){
+          document.getElementById("hit").onclick = () => { record(e,true); show(); };
+          document.getElementById("miss").onclick = () => { record(e,false); show(); };
+        }
+      };
+      draw();
+    } else {
+      const base = x.options.map((t2,i) => ({t:t2, ok:i===x.answer}));
+      const fixed = x.options.length===2 || x.options.some(t2 => /\b(above|these|first two)\b|^(none|all|both) of/i.test(t2));
+      const o = fixed ? base : shuffle(base);
+      app.innerHTML = `<a href="#daily">Stop for now</a><section class="panel">${head}<h2>${x.q}</h2>
+      <div class="opts">${o.map((y,k)=>`<button data-n="${k}">${y.t}</button>`).join("")}</div><div id="fb" aria-live="polite"></div></section>`;
+      const btns = app.querySelectorAll(".opts button");
+      btns.forEach((b,k) => b.onclick = () => {
+        btns.forEach((bb,j) => { bb.disabled = true; if(o[j].ok) bb.classList.add("right"); });
+        const ok = o[k].ok;
+        if(!ok) b.classList.add("wrong");
+        document.getElementById("fb").innerHTML = `<p><strong>${ok?"Correct.":"Not quite."}</strong> ${x.why}</p><button class="primary" id="nx">Next</button>`;
+        document.getElementById("nx").onclick = () => { record(e,ok); show(); };
+      });
+    }
+  };
+  show();
+}
+
 function route(){
   clearInterval(tick);
   const [id,tab] = location.hash.slice(1).split("/");
   if(id==="exam"){ examHome(); window.scrollTo(0,0); return; }
+  if(id==="daily"){ daily(); window.scrollTo(0,0); return; }
   const ch = CHAPTERS.find(c=>c.id===id);
   ch ? chapter(ch, tab||"summary") : home();
   window.scrollTo(0,0);
